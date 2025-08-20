@@ -107,10 +107,10 @@ export default function Preloader() {
         className="absolute text-center"
       >
         <h1 className="text-5xl font-bold text-gray-800 tracking-wide">
-          Hi, I&apos;m Muskan
+          Hi, Friend!
         </h1>
         <p className="mt-2 text-lg text-gray-600 font-medium">
-          Frontend Developer • Designer • Creative Thinker
+          Where creativity meets functionality.
         </p>
       </motion.div>
     </div>
