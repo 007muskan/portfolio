@@ -53,7 +53,7 @@ const SkillsCarousel = () => {
     const scrollContainer = carouselRef.current;
     if (!scrollContainer) return;
 
-    const scrollSpeed = 1.5; // pixels per frame
+    const scrollSpeed = 4; // pixels per frame
     const interval = 16; // ~60fps
 
     const scrollInterval = setInterval(() => {
