@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   SiReact,
@@ -47,33 +47,42 @@ const skills = [
 const extendedSkills = [...skills, ...skills, ...skills];
 
 const SkillsCarousel = () => {
-  const carouselRef = useRef(null);
+  const [translateX, setTranslateX] = useState(0);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const animationRef = useRef(null);
+  const isRunning = useRef(true);
 
-useEffect(() => {
-  const scrollContainer = carouselRef.current;
-  if (!scrollContainer) return;
+  useEffect(() => {
+    const animate = () => {
+      if (isRunning.current) {
+        setTranslateX((prev) => {
+          const newValue = prev - 1; // Adjust speed here (lower = slower, higher = faster)
+          // Reset when we've scrolled through one full set
+          const resetPoint = -(skills.length * 126); // 110px width + 16px gap
+          return newValue <= resetPoint ? 0 : newValue;
+        });
+      }
+      animationRef.current = requestAnimationFrame(animate);
+    };
 
-  const scrollSpeed = 6; // pixels per frame (adjust as needed)
-  let animationFrameId;
+    animationRef.current = requestAnimationFrame(animate);
 
-  const scroll = () => {
-    if (!scrollContainer) return;
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
 
-    scrollContainer.scrollLeft += scrollSpeed;
-
-    // Loop seamlessly
-    if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 3) {
-      scrollContainer.scrollLeft = 0;
-    }
-
-    animationFrameId = requestAnimationFrame(scroll);
+  const handleMouseEnter = (index) => {
+    setHoveredIndex(index);
+    isRunning.current = false; // Pause animation on hover
   };
 
-  animationFrameId = requestAnimationFrame(scroll);
-
-  return () => cancelAnimationFrame(animationFrameId);
-}, []);
-
+  const handleMouseLeave = () => {
+    setHoveredIndex(null);
+    isRunning.current = true; // Resume animation
+  };
 
   return (
     <section
@@ -84,36 +93,45 @@ useEffect(() => {
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
-        className="text-4xl font-extrabold text-center mb-10 mr-[1090px]"
+        className="text-4xl font-extrabold text-left mb-10"
       >
         Technical Skills
       </motion.h2>
 
-      <motion.div
-        ref={carouselRef}
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-        className="flex space-x-6 overflow-x-hidden px-4 md:px-10 py-4 scroll-smooth"
-      >
-        {extendedSkills.map((skill, index) => {
-          const baseColor = skill.color;
-          const hoverColor = darkenHex(baseColor, 20);
+      <div className="overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="flex space-x-4"
+          style={{
+            transform: `translateX(${translateX}px)`,
+            width: `${extendedSkills.length * 126}px`, // 110px + 16px gap
+          }}
+        >
+          {extendedSkills.map((skill, index) => {
+            const isHovered = hoveredIndex === index;
+            const baseColor = skill.color;
+            const hoverColor = darkenHex(baseColor, 20);
 
-          return (
-            <motion.div
-              key={index}
-              whileHover={{ scale: 1.2, backgroundColor: hoverColor }}
-              transition={{ type: "spring", stiffness: 200, damping: 20 }}
-              className="min-w-[110px] h-[110px] rounded-full shadow-md flex flex-col items-center justify-center text-[#5B5C89] cursor-pointer border border-[#e8e3d9] transition-all duration-300"
-              style={{ backgroundColor: baseColor }}
-            >
-              <div className="text-3xl">{skill.icon}</div>
-              <p className="text-xs font-semibold mt-1">{skill.label}</p>
-            </motion.div>
-          );
-        })}
-      </motion.div>
+            return (
+              <div
+                key={index}
+                className="min-w-[110px] h-[110px] rounded-full shadow-md flex flex-col items-center justify-center text-[#5B5C89] cursor-pointer border border-[#e8e3d9] transition-all duration-300 flex-shrink-0"
+                style={{
+                  backgroundColor: isHovered ? hoverColor : baseColor,
+                  transform: isHovered ? "scale(1.1)" : "scale(1)",
+                }}
+                onMouseEnter={() => handleMouseEnter(index)}
+                onMouseLeave={handleMouseLeave}
+              >
+                <div className="text-3xl">{skill.icon}</div>
+                <p className="text-xs font-semibold mt-1">{skill.label}</p>
+              </div>
+            );
+          })}
+        </motion.div>
+      </div>
     </section>
   );
 };
