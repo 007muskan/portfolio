@@ -49,24 +49,31 @@ const extendedSkills = [...skills, ...skills, ...skills];
 const SkillsCarousel = () => {
   const carouselRef = useRef(null);
 
-  useEffect(() => {
-    const scrollContainer = carouselRef.current;
+useEffect(() => {
+  const scrollContainer = carouselRef.current;
+  if (!scrollContainer) return;
+
+  const scrollSpeed = 6; // pixels per frame (adjust as needed)
+  let animationFrameId;
+
+  const scroll = () => {
     if (!scrollContainer) return;
 
-    const scrollSpeed = 4; // pixels per frame
-    const interval = 16; // ~60fps
+    scrollContainer.scrollLeft += scrollSpeed;
 
-    const scrollInterval = setInterval(() => {
-      scrollContainer.scrollLeft += scrollSpeed;
+    // Loop seamlessly
+    if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 3) {
+      scrollContainer.scrollLeft = 0;
+    }
 
-      // Loop seamlessly
-      if (scrollContainer.scrollLeft >= scrollContainer.scrollWidth / 3) {
-        scrollContainer.scrollLeft = 0;
-      }
-    }, interval);
+    animationFrameId = requestAnimationFrame(scroll);
+  };
 
-    return () => clearInterval(scrollInterval);
-  }, []);
+  animationFrameId = requestAnimationFrame(scroll);
+
+  return () => cancelAnimationFrame(animationFrameId);
+}, []);
+
 
   return (
     <section
