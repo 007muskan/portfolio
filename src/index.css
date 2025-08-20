@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes floatSlow {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  50% { transform: translateY(-14px) rotate(2deg) scale(1.05); }
+}
+@keyframes floatMedium {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  50% { transform: translateY(-18px) rotate(-2deg) scale(1.06); }
+}
+@keyframes floatFast {
+  0%,100% { transform: translateY(0) rotate(0deg) scale(1); }
+  50% { transform: translateY(-22px) rotate(3deg) scale(1.08); }
+}
+@keyframes morphCorner {
+  0%,100% { transform: rotate(0deg) scale(1); filter: saturate(1); }
+  50% { transform: rotate(4deg) scale(1.04); filter: saturate(1.05); }
+}
+/* optional dreamy color drift for SVGs */
+@keyframes hue {
+  0% { filter: hue-rotate(0deg); }
+  50% { filter: hue-rotate(12deg); }
+  100% { filter: hue-rotate(0deg); }
+}
+
+.animate-fadeUp { animation: fadeUp 1s ease forwards; }
+.animate-floatSlow { animation: floatSlow 6s ease-in-out infinite; }
+.animate-floatMedium { animation: floatMedium 4.5s ease-in-out infinite; }
+.animate-floatFast { animation: floatFast 3.8s ease-in-out infinite; }
+.animate-morphCorner { animation: morphCorner 6.5s ease-in-out infinite; }
+.animate-hue { animation: hue 7s ease-in-out infinite; }
+
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
